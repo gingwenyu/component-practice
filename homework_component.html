@@ -18,7 +18,7 @@
 </head>
 
 <body class="bg-lighter">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <!--<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="/">Vue.js 練習手冊</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
       aria-expanded="false" aria-label="Toggle navigation">
@@ -41,83 +41,49 @@
         <li class="nav-item">
           <a class="nav-link" href="/es6/let_const.html">ES6</a>
         </li>
-
       </ul>
     </div>
   </nav>
   <div class="container my-5">
     <div class="row">
-
       <div class="col-md-3">
-
         <div>
           <h6 class="text-capitalize text-muted">components</h6>
-
-
           <a href="/components/basic.html" class="btn btn-block btn-link">
             基礎元件
           </a>
-
-
-
           <a href="/components/function_return.html" class="btn btn-block btn-link">
             元件必須使用 function return
           </a>
-
-
-
           <a href="/components/prop_basic.html" class="btn btn-block btn-link">
             由外到內的資料傳遞
           </a>
-
-
-
           <a href="/components/prop_adv.html" class="btn btn-block btn-link">
             Props 注意事項
           </a>
-
-
-
           <a href="/components/prop_type.html" class="btn btn-block btn-link">
             Props 的型別
           </a>
-
-
-
           <a href="/components/emit.html" class="btn btn-block btn-link">
             向外層傳送事件(Data)
           </a>
-
-
-
           <a href="/components/slot.html" class="btn btn-block btn-link">
             Slot 插槽替換
           </a>
-
-
-
           <a href="/components/is.html" class="btn btn-block btn-link">
             動態組建切換
           </a>
-
-
-
           <a href="/components/eventbus.html" class="btn btn-block btn-link">
             Event Bus
           </a>
-
-
-
           <a href="/components/homework_component.html" class="btn btn-block btn-primary active">
             作業練習：元件變換
           </a>
-
-
         </div>
-      </div>
-
+      </div>-->
+  <!-- 練習開始 
       <div class="col-md-9 post">
-        <!-- 練習開始 -->
+        
         <h1 class="mt-0 text-muted">作業練習：元件變換</h1>
 
         <h3>模板練習作業：Ajax 資料內容呈現</h3>
@@ -131,176 +97,171 @@
             <li>依據不同污染呈現不同色彩</li>
             <li>加分題：透過 localStorage 儲存上次關注的城市</li>
           </ol>
-        </div>
-
-        <div id="app">
-          <select name="" id="" class="form-control mb-3">
-            <option value="">--- 請選擇城市 ---</option>
-            <option :value="air" v-for="air in filterCounty">{{ air }}</option>
-          </select>          
-          <div>
-            <h4>關注城市</h4>
-
-            <city-template is='' v-for="(item, key) in data" :air="item" :key="key"></city-template>
-            
-          </div>
-
-          <hr>
-
-          <div class="card-columns">
-            <div class="card status-aqi2">
-              <div class="card-header">苗栗縣 - 三義
-                <a href="#" class="float-right"><i class="far fa-star"></i></a>
-              </div>
-              <div class="card-body">
-                <ul class="list-unstyled">
-                  <li>AQI 指數: 54</li>
-                  <li>PM2.5: 8</li>
-                  <li>說明: 普通</li>
-                </ul>
-                2018-05-20 16:00
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <script type='text/x-template' id='cityTemplate'>
-           <div class="card-columns">
-             <div class="card status-aqi2">
-              <div class="card-header">{{air.County}}-{{air.SiteName}}
-                 <a href="#" class="float-right"><i class="fas fa-star"></i></a>
-              </div>
-              <div class="card-body">
-                <ul class="list-unstyled">
-                  <li>AQI 指數: {{air.AQI}}</li>
-                  <li>PM2.5: {{air.PM2.5}}</li>
-                  <li>說明: {{air.Status}}</li>
-                </ul>
-                {{air.PublishTime}}
-              </div>
-            </div>
-          </div>
-         </script>
-
-        <script>
-          Vue.component('city-template', {
-            props: ['air'],
-            template: '#cityTemplate',
-            data: function () {
-              return {
-                rawdata: {}
-              }
-            },
-            mounted: function () {
-              var vm = this;
-              $.ajax({
-                url: 'http://opendata2.epa.gov.tw/AQI.json',
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                  vm.rawdata = data;                  
-                }
-              })
-            },
-            computed:{
-              status: function (air) {
-                if (this.air.Status == '良好') {
-                  return 'status-aqi1';
-                } else if (this.air.Status == '普通') {
-                  return 'status-aqi2';
-                } else if (this.air.Status == '對敏感族群不健康') {
-                  return 'status-aqi3';
-                } else if (this.air.Status == '對所有族群不健康') {
-                  return 'status-aqi4';
-                } else if (this.air.Status == '非常不健康') {
-                  return 'status-aqi5';
-                } else if (this.air.Status == '危害') {
-                  return 'status-aqi6';
-                }
-              }
-            }
-
-
-          })
-
-          // API 來源
-          // https://opendata.epa.gov.tw/Data/Contents/AQI/
-
-          var app = new Vue({
-            el: '#app',
-            data: {
-              data: [],
-              location: [],
-              stared: [],
-              filter: '',
-            },
-            mounted: function () {
-              var vm = this;
-              $.ajax({
-                url: 'http://opendata2.epa.gov.tw/AQI.json',
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                  vm.test = data;
-                  console.log(data);
-                  console.log(data[0].SiteName+ data[0].AQI+data[0].Status);                  
-                }
-              })
-            },
-            computed:{
-              filterCounty:function(){
-
-              }
-            }            
-            /*
-            mounted: {
-              getData() {
-                const vm = this;
-                const api = 'http://opendata2.epa.gov.tw/AQI.json';
-
-                // 使用 jQuery ajax
-                $.get(api).then(function (response) {
-                  vm.data = response;
-                  console.log(response)
-                });
-              },
-            }  */
-
+          /*
+          mounted: {
+          getData() {
+          const vm = this;
+          const api = 'http://opendata2.epa.gov.tw/AQI.json';
+          
+          // 使用 jQuery ajax
+          $.get(api).then(function (response) {
+          vm.data = response;
+          console.log(response)
           });
-        </script>
-        <!-- 
-狀態對應表
-'良好',
-'status-aqi2' '普通',
-'status-aqi3' '對敏感族群不健康',
-'status-aqi4' '對所有族群不健康',
-'status-aqi5' '非常不健康',
-'status-aqi6' '危害'
--->
-        <style>
-          .status-aqi1 {
-            background-color: #00ff00;
-          }
-          .status-aqi2 {
-            background-color: #ffff00;
-          }
-          .status-aqi3 {
-            background-color: #ff7e00;
-          }
-          .status-aqi4 {
-            background-color: #ff0000;
-          }
-          .status-aqi5 {
-            background-color: #8f3f97;
-          }
-          .status-aqi6 {
-            background-color: #7e0023;
-          }
-        </style>
+          },
+          } */
+        </div>-->
 
-
+  <div id="app">
+    <h2 class="mt-3">空氣品質</h2>
+    <select class="form-control mb-3" v-model='locationNow'>      
+      <option value="">--- 請選擇城市 ---</option>
+      <!--<option value="" v-for="location in data">{{location.County}}</option>-->
+      <option :value="location" v-for="location in countyArr">{{location}}</option>
+    </select>
+    <div>
+      <h4>關注城市</h4>
+      <div class="card-columns">        
+        <city-template v-for="(item, key) in filterData" :air="item" :key="key"></city-template>
       </div>
     </div>
+    <hr>
+  </div>
+
+  <script type='text/x-template' id='cityTemplate'>
+     <div class="card" :class="status">
+        <div class="card-header">{{air.County}}-{{air.SiteName}}
+           <!--<a href="#" class="float-right"><i class="fas fa-star"></i></a>--><!--far fa-star-->         
+           <a href="#" class="float-right" @click="isStar=!isStar"><i class="far fa-star starToggle" :class="{'starToggle':isStar}" ></i></a>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled">
+            <li>AQI 指數: {{air.AQI}}</li>
+            <li>PM2.5: {{air['PM2.5']}}</li>
+            <li>說明: {{air.Status}}</li>
+          </ul>
+          {{air.PublishTime}}
+        </div>
+     </div>     
+  </script>
+
+  <script>
+    Vue.component('city-template', {
+      props: ['air'],
+      template: '#cityTemplate',      
+      computed: {
+        status: function () {
+          if (this.air.Status == '良好') {
+            return 'status-aqi1';
+          } else if (this.air.Status == '普通') {
+            return 'status-aqi2';
+          } else if (this.air.Status == '對敏感族群不健康') {
+            return 'status-aqi3';
+          } else if (this.air.Status == '對所有族群不健康') {
+            return 'status-aqi4';
+          } else if (this.air.Status == '非常不健康') {
+            return 'status-aqi5';
+          } else if (this.air.Status == '危害') {
+            return 'status-aqi6';
+          } else { return 'status-aqi0'; }
+        }
+
+      },
+      methods:{
+        //isStar=!isStar:function(){
+        //  this.$emit();
+        //}
+      }
+
+    })
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        data: [],        
+        locationNow: '',
+        stared: [],
+        filter: '',
+        isStar: false
+      },
+      mounted: function () {
+        var vm = this;
+        $.ajax({
+          url: 'http://opendata2.epa.gov.tw/AQI.json',
+          type: 'GET',
+          dataType: 'json',
+          success: function (data) {
+            vm.data = data;          //把資料放進root裡面的data[]             
+            console.log(data, this);
+          }
+        })
+      },
+      computed: {
+        countyArr: function () {
+          var vm = this;
+          var set = new Set();
+          var newArr = [];
+          var countyArr = vm.data.filter(function (loc) {
+            return !set.has(loc.County) ? set.add(loc.County) : false;
+          });
+          countyArr.forEach(function (county) {
+            newArr.push(county.County);
+          });
+          return newArr;
+        },
+        filterData: function () {
+          var vm = this;
+          if (vm.locationNow == '') {
+            return vm.data;
+          } else {
+            return vm.data.filter(function (item, index, array) {
+              return vm.locationNow === item.County;
+            })
+          }
+
+        }
+      },
+      methods:{
+        
+      }
+    });
+  </script>
+
+  <style>
+    .status-aqi0 {
+      background-color: #dedfe0;
+    }
+
+    .status-aqi1 {
+      background-color: #91fa91;
+    }
+
+    .status-aqi2 {
+      background-color: #ffff77;
+    }
+
+    .status-aqi3 {
+      background-color: #ff9c3a;
+    }
+
+    .status-aqi4 {
+      background-color: #ff4848;
+    }
+
+    .status-aqi5 {
+      background-color: #905296;
+    }
+    .status-aqi6 {
+      background-color: #861d3b;
+    }
+    .starToggle{
+      color:black;
+    }
+  </style>
+
+
+  </div>
+  </div>
   </div>
 </body>
 
