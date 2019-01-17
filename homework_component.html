@@ -17,79 +17,8 @@
 
 </head>
 
-<body class="bg-lighter">
-  <!--<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/">Vue.js 練習手冊</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
-      aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/basic/dev.html">基礎教學</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/template/basic.html">模板指令</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/components/basic.html">組件</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/api/vue_set.html">常用 API</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/es6/let_const.html">ES6</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-  <div class="container my-5">
-    <div class="row">
-      <div class="col-md-3">
-        <div>
-          <h6 class="text-capitalize text-muted">components</h6>
-          <a href="/components/basic.html" class="btn btn-block btn-link">
-            基礎元件
-          </a>
-          <a href="/components/function_return.html" class="btn btn-block btn-link">
-            元件必須使用 function return
-          </a>
-          <a href="/components/prop_basic.html" class="btn btn-block btn-link">
-            由外到內的資料傳遞
-          </a>
-          <a href="/components/prop_adv.html" class="btn btn-block btn-link">
-            Props 注意事項
-          </a>
-          <a href="/components/prop_type.html" class="btn btn-block btn-link">
-            Props 的型別
-          </a>
-          <a href="/components/emit.html" class="btn btn-block btn-link">
-            向外層傳送事件(Data)
-          </a>
-          <a href="/components/slot.html" class="btn btn-block btn-link">
-            Slot 插槽替換
-          </a>
-          <a href="/components/is.html" class="btn btn-block btn-link">
-            動態組建切換
-          </a>
-          <a href="/components/eventbus.html" class="btn btn-block btn-link">
-            Event Bus
-          </a>
-          <a href="/components/homework_component.html" class="btn btn-block btn-primary active">
-            作業練習：元件變換
-          </a>
-        </div>
-      </div>-->
-  <!-- 練習開始 
-      <div class="col-md-9 post">
-        
-        <h1 class="mt-0 text-muted">作業練習：元件變換</h1>
-
-        <h3>模板練習作業：Ajax 資料內容呈現</h3>
-        <p>本作業一定要用到元件。</p>
-        <div class="alert alert-secondary">
-          <p>提示：</p>
+<body class="bg-lighter">  
+  <!-- <p>提示：</p>
           <ol class="mb-0">
             <li>將資料內容透過 "元件" 呈現</li>
             <li>製作城市過濾選項</li>
@@ -122,7 +51,7 @@
     <div>
       <h4>關注城市</h4>
       <div class="card-columns">        
-        <city-template v-for="(item, key) in filterData" :air="item" :key="key"></city-template>
+        <city-template v-for="(item, key) in filterData" :air="item" :key="key" @stared-status="staredCount"></city-template>
       </div>
     </div>
     <hr>
@@ -131,8 +60,10 @@
   <script type='text/x-template' id='cityTemplate'>
      <div class="card" :class="status">
         <div class="card-header">{{air.County}}-{{air.SiteName}}
-           <!--<a href="#" class="float-right"><i class="fas fa-star"></i></a>--><!--far fa-star-->         
-           <a href="#" class="float-right" @click="isStar=!isStar"><i class="far fa-star starToggle" :class="{'starToggle':isStar}" ></i></a>
+           <a href="#" class="float-right" @click="starStatus">
+             <i class="fas fa-star" v-show="!air.star"></i>
+             <i class="far fa-star" v-show="air.star"></i>
+           </a>            
         </div>
         <div class="card-body">
           <ul class="list-unstyled">
@@ -168,9 +99,10 @@
 
       },
       methods:{
-        //isStar=!isStar:function(){
-        //  this.$emit();
-        //}
+        starStatus:function(){
+          this.air.star=!this.air.star;
+          this.$emit('staredStatus');          
+        }  
       }
 
     })
@@ -182,7 +114,7 @@
         locationNow: '',
         stared: [],
         filter: '',
-        isStar: false
+        //isStar: false
       },
       mounted: function () {
         var vm = this;
@@ -218,10 +150,17 @@
               return vm.locationNow === item.County;
             })
           }
-
-        }
+        }        
       },
       methods:{
+        staredCount: function (item) {          
+          console.log('clicked');
+          //var vm=this;
+          //if(vm.star){
+          //  vm.stared.push(item);
+          //}             
+          
+        }
         
       }
     });
@@ -233,7 +172,7 @@
     }
 
     .status-aqi1 {
-      background-color: #91fa91;
+      background-color: #d3fccc;
     }
 
     .status-aqi2 {
@@ -253,10 +192,7 @@
     }
     .status-aqi6 {
       background-color: #861d3b;
-    }
-    .starToggle{
-      color:black;
-    }
+    }    
   </style>
 
 
