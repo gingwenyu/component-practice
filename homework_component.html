@@ -127,7 +127,7 @@
           dataType: 'json',
           success: function (data) {
             vm.data = data;          //把資料放進root裡面的data[]             
-            console.log(data, this);
+            console.log(data, this);            
           }
         })
       },
@@ -156,13 +156,19 @@
         },
         staredGet:function(){                   
           var vm=this;
-          //console.log(vm.stared);
+          console.log(vm.stared);          
           if(vm.stared==[]){
             return;
-          }else {
+          }else {    
+            //vm.stared.filter(function(item,index,array){
+            //  console.log(item.PublishTime);               //是比較舊的時間
+            //})               
             return JSON.parse(localStorage.getItem('AQIstared'));  //JSON.parse
           }          
-        }
+        },
+        //update:function(){
+        //  
+        //}      
       },
       methods:{
         staredCount: function (item) { 
@@ -171,8 +177,8 @@
           var vm = this;
           if(item.star){
             vm.stared.push(item); 
-            //console.log(this.stared);
-            return localStorage.setItem('AQIstared', JSON.stringify(vm.stared));                   
+            //console.log(this.stared);            
+            return localStorage.setItem('AQIstared', JSON.stringify(vm.stared));                      
           }                   
         },
         
