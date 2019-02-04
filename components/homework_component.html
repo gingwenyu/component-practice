@@ -50,12 +50,12 @@
     <div>
       <h4>關注城市</h4>
       <div class="card-columns">
-        <city-template v-for="(item, key) in staredGet" :air="item" :key="key" @stared-status="staredCount(item)"></city-template>
+        <city-template v-for="(item, key) in staredGet" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
       </div>
       <hr>
       <h5>其他測站</h5>
       <div class="card-columns">        
-        <city-template v-for="(item, key) in filterData" :air="item" :key="key" @stared-status="staredCount(item)"></city-template>
+        <city-template v-for="(item, key) in filterData" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
       </div>
     </div>
     <hr>
@@ -125,9 +125,9 @@
           url: 'http://opendata2.epa.gov.tw/AQI.json',
           type: 'GET',
           dataType: 'json',
-          success: function (data) {
-            vm.data = data;          //把資料放進root裡面的data[]             
-            console.log(data, this);            
+          success: function (dataD) {
+            vm.data = dataD;          //把資料放進root裡面的data[]             
+            console.log(dataD, this);            
           }
         })
       },
@@ -159,26 +159,40 @@
           console.log(vm.stared);          
           if(vm.stared==[]){
             return;
-          }else {    
-            //vm.stared.filter(function(item,index,array){
-            //  console.log(item.PublishTime);               //是比較舊的時間
-            //})               
-            return JSON.parse(localStorage.getItem('AQIstared'));  //JSON.parse
+          }else {               
+            //return JSON.parse(localStorage.getItem('AQIstared'));     //原本的ok
+
+            //以下的寫法，想要比對localStorage.getItem的SiteName和vm.stared的SiteName，
+            //如果SiteName相同，要重新撈取ajax的資料，再次寫入localStorage.setItem，再重新取得資料localStorage.getItem
+            var getdata=JSON.parse(localStorage.getItem('AQIstared'));
+            getdata.forEach(function(item){
+              console.log(item.SiteName, getdata);    
+              vm.stared.findIndex(function(el){
+                if(item.SiteName == el.SiteName){
+                  localStorage.setItem('AQIstared', JSON.stringify(vm.stared));
+                  console.log(JSON.parse(localStorage.getItem('AQIstared')));  
+                }
+                
+              })               
+            })             
           }          
-        },
-        //update:function(){
-        //  
-        //}      
+        },            
       },
       methods:{
-        staredCount: function (item) { 
+        staredCount: function (item,key) { 
           this.$emit('stared-status');         
           //console.log(item.star);
           var vm = this;
           if(item.star){
             vm.stared.push(item); 
-            //console.log(this.stared);            
-            return localStorage.setItem('AQIstared', JSON.stringify(vm.stared));                      
+            //console.log(this.stared); 
+            localStorage.setItem('AQIstared', JSON.stringify(vm.stared)); 
+          }else{           
+            var newIndex = vm.stared.findIndex(function (el,index) {
+              return item.SiteName == el.SiteName;  
+            });   
+            vm.stared.splice(newIndex, 1); 
+            localStorage.setItem('AQIstared', JSON.stringify(vm.stared)); 
           }                   
         },
         
