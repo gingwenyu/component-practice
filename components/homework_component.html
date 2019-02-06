@@ -50,7 +50,7 @@
     <div>
       <h4>關注城市</h4>
       <div class="card-columns">
-        <city-template v-for="(item, key) in staredGet" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
+        <city-template v-for="(item, key) in compareStared" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
       </div>
       <hr>
       <h5>其他測站</h5>
@@ -127,7 +127,8 @@
           dataType: 'json',
           success: function (dataD) {
             vm.data = dataD;          //把資料放進root裡面的data[]             
-            console.log(dataD, this);            
+            console.log(dataD, this); 
+            vm.compareStared(); // 比對遠端與本地資料           
           }
         })
       },
@@ -153,30 +154,30 @@
               return vm.locationNow === item.County;
             })
           }
-        },
-        staredGet:function(){                   
-          var vm=this;
-          console.log(vm.stared);          
-          if(vm.stared==[]){
-            return;
-          }else {               
-            //return JSON.parse(localStorage.getItem('AQIstared'));     //原本的ok
-
-            //以下的寫法，想要比對localStorage.getItem的SiteName和vm.stared的SiteName，
-            //如果SiteName相同，要重新撈取ajax的資料，再次寫入localStorage.setItem，再重新取得資料localStorage.getItem
-            var getdata=JSON.parse(localStorage.getItem('AQIstared'));
-            getdata.forEach(function(item){
-              console.log(item.SiteName, getdata);    
-              vm.stared.findIndex(function(el){
-                if(item.SiteName == el.SiteName){
-                  localStorage.setItem('AQIstared', JSON.stringify(vm.stared));
-                  console.log(JSON.parse(localStorage.getItem('AQIstared')));  
-                }
-                
-              })               
-            })             
-          }          
-        },            
+        },    
+        //staredGet:function(){                   
+        //  var vm=this;
+        //  console.log(vm.stared);          
+        //  if(vm.stared==[]){
+        //    return;
+        //  }else {               
+        //    //return JSON.parse(localStorage.getItem('AQIstared'));     //原本的ok
+        //
+        //    //以下的寫法，想要比對localStorage.getItem的SiteName和vm.stared的SiteName，
+        //    //如果SiteName相同，要重新撈取ajax的資料，再次寫入localStorage.setItem，再重新取得資料localStorage.getItem
+        //    var getdata=JSON.parse(localStorage.getItem('AQIstared'));
+        //    getdata.forEach(function(item){
+        //      console.log(item.SiteName, getdata);    
+        //      vm.stared.findIndex(function(el){
+        //        if(item.SiteName == el.SiteName){
+        //          localStorage.setItem('AQIstared', JSON.stringify(vm.stared));
+        //          console.log(JSON.parse(localStorage.getItem('AQIstared')));  
+        //        }
+        //        
+        //      })               
+        //    })             
+        //  }          
+        //},            
       },
       methods:{
         staredCount: function (item,key) { 
@@ -194,6 +195,32 @@
             vm.stared.splice(newIndex, 1); 
             localStorage.setItem('AQIstared', JSON.stringify(vm.stared)); 
           }                   
+        },
+        //以下待確認
+        compareStared:function(){
+          var vm=this;
+          console.log(vm.stared);    //只有在按下星號才有資料，如果畫面重新整理沒有資料
+        
+          //return JSON.parse(localStorage.getItem('AQIstared'));     //164.原本的ok      
+        
+          var getdata=JSON.parse(localStorage.getItem('AQIstared'));
+          getdata.forEach(function(item){
+            console.log(item.SiteName, getdata);    
+            vm.data.findIndex(function(el){
+              if(item.SiteName == el.SiteName){
+                console.log(el.SiteName); 
+
+                //存入的值待確認，要更新已加星號的資料  
+                //想要用ajax取得資料，比對localStorage.getItem的 SiteName，以SiteName撈出最新的資料             
+                //localStorage.setItem('AQIstared', JSON.stringify(vm.data));
+
+                console.log(JSON.parse(localStorage.getItem('AQIstared')));
+                return JSON.parse(localStorage.getItem('AQIstared'));        //這裡return，資料沒有出現在畫面上，或是return要放在更外層? 
+
+              }
+            })               
+          })   
+         
         },
         
       }
