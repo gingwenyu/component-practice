@@ -3,16 +3,17 @@
 <head>
   <title>作業練習：元件變換</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="images/favicon.ico" rel="shortcut icon">
+  <link href="/component-practice/images/favicon.ico" rel="shortcut icon">
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/stylesheets/all.css">
+  <link rel="stylesheet" href="/component-practice/stylesheets/all.css">
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l"
     crossorigin="anonymous"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/regular.js" integrity="sha384-t7yHmUlwFrLxHXNLstawVRBMeSLcXTbQ5hsd0ifzwGtN7ZF7RZ8ppM7Ldinuoiif"
     crossorigin="anonymous"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c"
     crossorigin="anonymous"></script>
-  <script src="/javascripts/vendor.js"></script>
+  <script src="/component-practice/javascripts/vendor.js"></script>
+  <!--以 CSS 來說，路徑需增加儲存庫名稱，如下：/component-practice/stylesheets/all.css-->
 
 </head>
 
@@ -41,24 +42,26 @@
         </div>-->
 
   <div id="app">
-    <h2 class="mt-3">空氣品質</h2>
-    <select class="form-control mb-3" v-model='locationNow'>      
-      <option value="">--- 請選擇城市 ---</option>
-      <!--<option value="" v-for="location in data">{{location.County}}</option>-->
-      <option :value="location" v-for="location in countyArr">{{location}}</option>
-    </select>
-    <div>
-      <h4>關注城市</h4>
-      <div class="card-columns">
-        <city-template v-for="(item, key) in compareStared" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
+    <h2 class="mt-3 text-center">空氣品質</h2>
+    <div class="container">
+      <select class="form-control mb-3" v-model='locationNow'>      
+        <option value="">--- 請選擇城市 ---</option>
+        <!--<option value="" v-for="location in data">{{location.County}}</option>-->
+        <option :value="location" v-for="location in countyArr">{{location}}</option>
+      </select>
+      <div>
+        <h4>關注城市</h4>
+        <div class="card-columns">
+          <city-template v-for="(item, key) in stared" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
+        </div>
+        <hr>
+        <h5>其他測站</h5>
+        <div class="card-columns">        
+          <city-template v-for="(item, key) in filterData" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
+        </div>
       </div>
       <hr>
-      <h5>其他測站</h5>
-      <div class="card-columns">        
-        <city-template v-for="(item, key) in filterData" :air="item" :key="key" @stared-status="staredCount(item,key)"></city-template>
-      </div>
     </div>
-    <hr>
   </div>
 
   <script type='text/x-template' id='cityTemplate'>
@@ -116,8 +119,7 @@
       data: {
         data: [],        
         locationNow: '',
-        stared: [],
-        filter: '',       
+        stared: [],               
       },
       mounted: function () {
         var vm = this;
@@ -155,29 +157,7 @@
             })
           }
         },    
-        //staredGet:function(){                   
-        //  var vm=this;
-        //  console.log(vm.stared);          
-        //  if(vm.stared==[]){
-        //    return;
-        //  }else {               
-        //    //return JSON.parse(localStorage.getItem('AQIstared'));     //原本的ok
-        //
-        //    //以下的寫法，想要比對localStorage.getItem的SiteName和vm.stared的SiteName，
-        //    //如果SiteName相同，要重新撈取ajax的資料，再次寫入localStorage.setItem，再重新取得資料localStorage.getItem
-        //    var getdata=JSON.parse(localStorage.getItem('AQIstared'));
-        //    getdata.forEach(function(item){
-        //      console.log(item.SiteName, getdata);    
-        //      vm.stared.findIndex(function(el){
-        //        if(item.SiteName == el.SiteName){
-        //          localStorage.setItem('AQIstared', JSON.stringify(vm.stared));
-        //          console.log(JSON.parse(localStorage.getItem('AQIstared')));  
-        //        }
-        //        
-        //      })               
-        //    })             
-        //  }          
-        //},            
+        
       },
       methods:{
         staredCount: function (item,key) { 
@@ -196,27 +176,21 @@
             localStorage.setItem('AQIstared', JSON.stringify(vm.stared)); 
           }                   
         },
-        //以下待確認
+        /*compareStared 運行 console 時只有取得遠端資料，自然不會有 Stared 的資料
+          在此流程應為 (1. 取得遠端資訊 (2. 取得 localStorage (3. 依據上述兩份資料產生 Stared
+        */
         compareStared:function(){
           var vm=this;
-          console.log(vm.stared);    //只有在按下星號才有資料，如果畫面重新整理沒有資料
-        
-          //return JSON.parse(localStorage.getItem('AQIstared'));     //164.原本的ok      
-        
+          console.log(vm.data);   //是最新的資料
+
           var getdata=JSON.parse(localStorage.getItem('AQIstared'));
-          getdata.forEach(function(item){
-            console.log(item.SiteName, getdata);    
-            vm.data.findIndex(function(el){
+          getdata.forEach(function(item){                
+            vm.data.filter(function(el){
               if(item.SiteName == el.SiteName){
-                console.log(el.SiteName); 
-
-                //存入的值待確認，要更新已加星號的資料  
-                //想要用ajax取得資料，比對localStorage.getItem的 SiteName，以SiteName撈出最新的資料             
-                //localStorage.setItem('AQIstared', JSON.stringify(vm.data));
-
-                console.log(JSON.parse(localStorage.getItem('AQIstared')));
-                return JSON.parse(localStorage.getItem('AQIstared'));        //這裡return，資料沒有出現在畫面上，或是return要放在更外層? 
-
+                vm.stared.push(el);
+                console.log(vm.stared);   //是最新的資料
+                localStorage.setItem('AQIstared', JSON.stringify(vm.stared));
+                JSON.parse(localStorage.getItem('AQIstared'));
               }
             })               
           })   
@@ -231,23 +205,18 @@
     .status-aqi0 {
       background-color: #dedfe0;
     }
-
     .status-aqi1 {
       background-color: #d3fccc;
     }
-
     .status-aqi2 {
       background-color: #ffff77;
     }
-
     .status-aqi3 {
       background-color: #ff9c3a;
     }
-
     .status-aqi4 {
       background-color: #ff4848;
     }
-
     .status-aqi5 {
       background-color: #905296;
     }
